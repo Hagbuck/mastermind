@@ -2,10 +2,10 @@ import random
 import copy
 import itertools
 
-max_row = 8
-row_size = 3
+max_row = 10
+row_size = 4
 min_val = 1
-max_val = 3
+max_val = 8
 
 """
 Board of Mastermind
@@ -71,8 +71,8 @@ class Board:
         for i in range(0, len(r)):
             if r[i] != None and r[i] in s:
                 res['wrong'] += 1
-                s[i] = None
-                pass
+                s[s.index(r[i])] = None
+                r[i] = None 
         self.res.append(res)
 
     """
@@ -102,16 +102,17 @@ class Board:
 
     """
     Get all moves with taking in consideration the last move
-    TO IMPROVE
     """
     def reduce_moves(self, moves):
-        last_m = self.rows[self.i]
         last_res = self.res[self.i]
 
+        ms = list(moves)
         new_moves = []
 
         # For each possible move
-        for m in moves:
+        for move in ms:
+            m = list(move)
+            last_m = list(self.rows[self.i])
             good_found = 0
 
             # Browse each pawn
@@ -120,11 +121,26 @@ class Board:
                 # Count the good placed
                 if m[i] == last_m[i]:
                     good_found += 1
+                    m[i] = None
+                    last_m[i] = None
 
-            if good_found >= last_res["good"]:
-                new_moves.append(m)
+            # We need to have the same number of good
+            if good_found == last_res["good"]:
+                wrong_founded = 0
 
-        return list(set(new_moves))
+                for i in range(0, len(m)):
+
+                    # Count the wrong placed
+                    if m[i] != None and m[i] in last_m:
+                        wrong_founded += 1
+                        last_m[last_m.index(m[i])] = None
+                        m[i] = None
+
+                if wrong_founded == last_res["wrong"]:
+                    new_moves.append(move)
+
+
+        return list(new_moves)
 
     """
     Return a string that contain the board
