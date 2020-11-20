@@ -19,6 +19,8 @@ class Board:
         self.i = -1
         self.rows = []
         self.res = []
+        self.max_row = max_row
+        self.row_size = row_size
 
     """
     Return a copy of the board

@@ -15,9 +15,8 @@ def basic_ai(b):
 
         if b.is_solution(move):
             print('WIN')
-            exit()
+            break
 
         moves = b.reduce_moves(moves)
         print("Possibles moves ({}) : {}".format(len(moves), moves))
         move = random.choice(moves)
-        
