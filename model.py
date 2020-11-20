@@ -53,6 +53,12 @@ class Board:
                 return False
         return True
 
+    def is_winned(self):
+        if len(self.res) > 0:
+            if self.res[-1]["good"] == self.row_size:
+                return True
+        return False
+
     """
     Evaluate a move and save the result into self.res
     It should be call only by the play method

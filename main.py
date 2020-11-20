@@ -12,13 +12,19 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(window_size)
 
     b = UIBoard()
-    basic_ai(b)
+    ai = basic_ai(b)
 
     while 1:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            if event.type == pygame.QUIT:
                 sys.exit()
 
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()
+                elif event.key == pygame.K_SPACE:
+                    ai.next_move()
+
         screen.fill(black)
-        b.draw(screen)
+        b.draw(screen, True)
         pygame.display.flip()

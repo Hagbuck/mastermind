@@ -35,7 +35,7 @@ class UIBoard(Board):
             8 : (210, 40, 130), # Pink
         }
 
-    def draw(self, surf):
+    def draw(self, surf, show_all_moves = False):
         board_width = self.row_size * self.pawn_size + 2
         board_height = self.pawn_size * (self.max_row + 1) # +1 for the solution
 
@@ -68,3 +68,6 @@ class UIBoard(Board):
 
         # Step 5 cache solution
         pygame.draw.rect(surf, color["dark_brown"], (0, self.max_row * self.pawn_size, board_width, self.pawn_size *2/ 3))
+
+        
+        
