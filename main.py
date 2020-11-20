@@ -20,6 +20,5 @@ if __name__ == '__main__':
                 sys.exit()
 
         screen.fill(black)
-        #pygame.draw.ellipse(screen, (255,0,0), (0,0,64,64))
         b.draw(screen)
         pygame.display.flip()
