@@ -1,7 +1,11 @@
 from model import Board
 import pygame
+import math
 from pygame import gfxdraw
 
+"""
+Display a smooth circle
+"""
 def draw_circle(surface, x, y, radius, color):
     gfxdraw.aacircle(surface, x, y, radius, color)
     gfxdraw.filled_circle(surface, x, y, radius, color)
@@ -35,7 +39,7 @@ class UIBoard(Board):
             8 : (210, 40, 130), # Pink
         }
 
-    def draw(self, surf, show_all_moves = False):
+    def draw(self, surf, moves = None):
         board_width = self.row_size * self.pawn_size + 2
         board_height = self.pawn_size * (self.max_row + 1) # +1 for the solution
 
@@ -69,5 +73,19 @@ class UIBoard(Board):
         # Step 5 cache solution
         pygame.draw.rect(surf, color["dark_brown"], (0, self.max_row * self.pawn_size, board_width, self.pawn_size *2/ 3))
 
-        
-        
+        # Step 6 (optionnal) : Display all possible move
+        if moves != None:
+            sol_pawn_size = 8
+            sol_pawn_radius = sol_pawn_size // 2
+
+            y_max = surf.get_rect().height - 2 * sol_pawn_size
+
+            for i in range(0, len(moves)):
+                for j in range(0, len(moves[i])):
+                    y = (i * sol_pawn_size + sol_pawn_radius)
+                    x = (board_width) + (j * sol_pawn_size + sol_pawn_radius)
+                    # Add offset to column change
+                    x = x + (math.floor(1.5 * len(moves[i]) * sol_pawn_size)) * math.floor(y / y_max)
+                    y = y % y_max
+                    
+                    draw_circle(surf,x,y,sol_pawn_radius,self.color_map.get(moves[i][j]))

@@ -15,6 +15,9 @@ class Board:
     Create the board, if any solution is given, the solution is random
     """
     def __init__(self, solution = None):
+        self.reset(solution)
+
+    def reset(self, solution = None):
         self.solution = self.random_move() if solution == None else solution
         self.i = -1
         self.rows = []
@@ -53,11 +56,24 @@ class Board:
                 return False
         return True
 
-    def is_winned(self):
+    """
+    Return True if the last move win the game, False otherwise
+    """
+    def is_win(self):
         if len(self.res) > 0:
             if self.res[-1]["good"] == self.row_size:
                 return True
         return False
+
+    """
+    Return True if the last move loose the game, False otherwise
+    """
+    def is_loose(self):
+        if len(self.res) == self.max_row and len(self.res) > 0:
+            if self.res[-1]["good"] < self.row_size:
+                return True
+        return False
+
 
     """
     Evaluate a move and save the result into self.res
