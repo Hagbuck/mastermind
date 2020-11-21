@@ -3,8 +3,8 @@ import csv, xlsxwriter
 from model import Board
 
 class Stats():
-    def __init__(self, b):
-        self.file = 'stats.xlsx'
+    def __init__(self, b, file_name = 'stats.xlsx'):
+        self.file = file_name
         self.data = []
         self.max_row = b.max_row
 

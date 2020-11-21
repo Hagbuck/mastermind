@@ -4,7 +4,7 @@ from basic_ai import basic_ai
 from stats import Stats
 
 
-import sys, pygame, csv
+import sys, pygame, time
 
 colors = {
     "black" : (0, 0, 0),
@@ -12,20 +12,31 @@ colors = {
     "dark_red" : (100, 0, 0),
 }
 
-if __name__ == '__main__':
+def auto_runner(b, ai, stats, occ):
+    print('Running for {} iterations'.format(occ))
+    beg = time.time()
+    i = 0
+    while i < occ:
+        if b.is_win() or b.is_loose():
+            stats.register_data(b)
+            b.reset()
+            ai.reset()
+            i += 1
+        else:
+            ai.next_move()
+    print('Finish in : {}'.format(time.time() - beg))
+
+    stats.save_file()
+    print(stats)
+
+def pygame_run(b, ai, stats):
     pygame.init()
 
     window_size = width, height = 1200, 600
     screen = pygame.display.set_mode(window_size)
 
-    b = UIBoard()
-    ai = basic_ai(b)
-    stats = Stats(b)
-
-
     loop = True
     auto_mod = True
-    ui = True
 
     while loop:
         if auto_mod:
@@ -54,23 +65,34 @@ if __name__ == '__main__':
                             ai.reset()
                         else:
                             ai.next_move()
-        if ui:
-            if b.is_loose():
-                for i in range(0, 3):
-                    screen.fill(colors["dark_red"])
-                    b.draw(screen, ai.moves)
-                    pygame.display.flip()
-                    pygame.time.delay(40)
+        if b.is_loose():
+            for i in range(0, 3):
+                screen.fill(colors["dark_red"])
+                b.draw(screen, ai.moves)
+                pygame.display.flip()
+                pygame.time.delay(40)
 
-                    screen.fill(colors["black"])
-                    b.draw(screen, ai.moves)
-                    pygame.display.flip()
-                    pygame.time.delay(40)
+                screen.fill(colors["black"])
+                b.draw(screen, ai.moves)
+                pygame.display.flip()
+                pygame.time.delay(40)
 
 
-            screen.fill(colors["black"])
-            b.draw(screen, ai.moves)
-            pygame.display.flip()
+        screen.fill(colors["black"])
+        b.draw(screen, ai.moves)
+        pygame.display.flip()
 
     stats.save_file()
     print(stats)
+
+if __name__ == '__main__':
+    b = UIBoard()
+    ai = basic_ai(b)
+
+    if len(sys.argv) <= 1:
+        stats = Stats(b)
+        pygame_run(b, ai, stats)
+    else:
+        occ = int(sys.argv[1])
+        stats = Stats(b, "{}_games.xlsx".format(occ))
+        auto_runner(b, ai, stats, occ)
