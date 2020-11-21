@@ -12,8 +12,11 @@ def draw_circle(surface, x, y, radius, color):
 
 color = {
     "brown" : (139,69,19),
+    "middle_brown" : (210,105,30),
     "dark_brown" : (89, 19, 0),
     "gold" : (255,215,0),
+    "black": (0,0,0),
+    "white" : (255,255,255),
 }
 
 class UIBoard(Board):
@@ -22,6 +25,8 @@ class UIBoard(Board):
 
         self.pawn_size = 32
         self.pawn_radius = self.pawn_size // 2
+        self.res_size = self.pawn_size // self.row_size
+        self.res_radius = self.res_size // 2
 
         self.color_map = color_map
         if self.color_map == None:
@@ -40,26 +45,39 @@ class UIBoard(Board):
         }
 
     def draw(self, surf, moves = None):
-        board_width = self.row_size * self.pawn_size + 2
+        board_width = (self.row_size + 1) * self.pawn_size + 2 # +1 for the result
         board_height = self.pawn_size * (self.max_row + 1) # +1 for the solution
 
         # Step 1 : Draw the board
-        pygame.draw.rect(surf, color["brown"], (0, 0, board_width, board_height))
+        pygame.draw.rect(surf, color["brown"], (0, 0, board_width - self.pawn_size, board_height))
+        pygame.draw.rect(surf, color["middle_brown"], (board_width - self.pawn_size, 0, self.pawn_size, board_height))
 
         # Step 2 draw the line between rows
         for i in range(0, self.max_row):
             pygame.draw.rect(surf, color["gold"], (0, i * self.pawn_size, board_width, 2))
 
-        # Step 3 draw the pawns
+        # Step 3 draw the pawns and result
         for i in range(0, len(self.rows)):
+            # Pawns
             for j in range(0, len(self.rows[i])):
-                #pygame.draw.ellipse(surf, self.color_map.get(self.rows[i][j]), (j * self.pawn_size, i * self.pawn_size, self.pawn_size, self.pawn_size))
                 draw_circle(surf, 
                             j * self.pawn_size + self.pawn_radius,
                             i * self.pawn_size + self.pawn_radius, 
                             self.pawn_radius,
                             self.color_map.get(self.rows[i][j])
                         )
+            # Result
+            for j in range(0, self.res[i] ["good"]):
+                x = (self.row_size * self.pawn_size) + j * self.res_size + self.res_radius
+                y = (i * self.pawn_size) + math.floor(self.pawn_size * 1 / 3)
+
+                draw_circle(surf, x, y, self.res_radius, color["black"])
+
+            for j in range(0, self.res[i] ["wrong"]):
+                x = (self.row_size * self.pawn_size) + j * self.res_size + self.res_radius
+                y = (i * self.pawn_size) + math.floor(self.pawn_size * 2 / 3)
+
+                draw_circle(surf, x, y, self.res_radius, color["white"])
 
         # Step 4 display the solution
         for i in range(0, len(self.solution)):
