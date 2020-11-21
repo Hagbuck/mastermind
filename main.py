@@ -1,8 +1,10 @@
 from model import Board
 from ui import UIBoard
 from basic_ai import basic_ai
+from stats import Stats
 
-import sys, pygame
+
+import sys, pygame, csv
 
 colors = {
     "black" : (0, 0, 0),
@@ -18,17 +20,21 @@ if __name__ == '__main__':
 
     b = UIBoard()
     ai = basic_ai(b)
+    stats = Stats(b)
+
 
     loop = True
-    auto_mod = False
+    auto_mod = True
+    ui = True
 
     while loop:
         if auto_mod:
             if b.is_win() or b.is_loose():
+                stats.register_data(b)
                 b.reset()
                 ai.reset()
             else:
-                pygame.time.delay(100)
+                # pygame.time.delay(100)
                 ai.next_move()
 
         for event in pygame.event.get():
@@ -48,20 +54,23 @@ if __name__ == '__main__':
                             ai.reset()
                         else:
                             ai.next_move()
+        if ui:
+            if b.is_loose():
+                for i in range(0, 3):
+                    screen.fill(colors["dark_red"])
+                    b.draw(screen, ai.moves)
+                    pygame.display.flip()
+                    pygame.time.delay(40)
 
-        if b.is_loose():
-            for i in range(0, 3):
-                screen.fill(colors["dark_red"])
-                b.draw(screen, ai.moves)
-                pygame.display.flip()
-                pygame.time.delay(40)
-
-                screen.fill(colors["black"])
-                b.draw(screen, ai.moves)
-                pygame.display.flip()
-                pygame.time.delay(40)
+                    screen.fill(colors["black"])
+                    b.draw(screen, ai.moves)
+                    pygame.display.flip()
+                    pygame.time.delay(40)
 
 
-        screen.fill(colors["black"])
-        b.draw(screen, ai.moves)
-        pygame.display.flip()
+            screen.fill(colors["black"])
+            b.draw(screen, ai.moves)
+            pygame.display.flip()
+
+    stats.save_file()
+    print(stats)
