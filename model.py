@@ -37,12 +37,15 @@ class Board:
     Return True if a move is allow, False otherwise
     """
     def is_move_allowed(self, r):
+        # Board full
         if self.i >= self.max_row - 1:
             return False
 
-        if len(r) != self.row_size:
+        # Wrong size
+        if not r or len(r) != self.row_size:
             return False
 
+        # Check if values or allowed
         for v in r:
             if v > self.max_val or v < self.min_val:
                 return False
@@ -53,6 +56,10 @@ class Board:
     Return True if the move (r) is the solution
     """
     def is_solution(self, r):
+        # Wrong size
+        if not r or len(r) != self.row_size:
+            return False
+
         for i in range(0, len(r)):
             if r[i] != self.solution[i]:
                 return False
