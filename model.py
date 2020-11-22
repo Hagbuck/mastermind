@@ -63,8 +63,16 @@ class Board:
         if self.i >= self.max_row - 1:
             return False
 
+        # Can't play on a win board
+        if self.is_win():
+            return False
+
         # Wrong size
         if not r or len(r) != self.row_size:
+            return False
+
+        # Move can't contain None
+        if None in r:
             return False
 
         # Check if values or allowed
@@ -107,13 +115,17 @@ class Board:
 
 
     """
-    Evaluate a move and save the result into self.res
-    It should be call only by the play method
+    Evaluate a move and return the result
     """
     def evaluate(self, move):
+        if None in move:
+            raise ValueError("move({}) can't contain None value".format(move))
+        
         res = {}
         res['good'] = 0
         res['wrong'] = 0
+
+        # copy to preserve the source data
         s = list(self.solution)
         r = list(move)
 
@@ -127,8 +139,8 @@ class Board:
             if r[i] != None and r[i] in s:
                 res['wrong'] += 1
                 s[s.index(r[i])] = None
-                r[i] = None 
-        self.res.append(res)
+                r[i] = None
+        return res
 
     """
     Play a move(r)
@@ -138,7 +150,8 @@ class Board:
         if can_play:
             self.rows.append(r)
             self.i += 1
-            self.evaluate(r)
+            self.res.append(self.evaluate(r))
+        return can_play
 
     """
     Generate a random move

@@ -67,6 +67,12 @@ def test_board_is_move_allowed_board_full():
     b.play(m)
     assert b.is_move_allowed(m) == False
 
+def test_board_is_move_allowed_board_full():
+    b = Board(max_row = 2, row_size = 4, min_val = 1, solution = [1, 1, 1, 1])
+    m = [1, 1, 1, 1]
+    b.play(m)
+    assert b.is_move_allowed(m) == False
+
 def test_board_is_move_allowed_move_to_big():
     b = Board(max_row = 1)
     m = b.get_random_move()
@@ -94,6 +100,11 @@ def test_board_is_move_allowed_move_contain_lower_value():
 def test_board_is_move_allowed_none_move():
     b = Board(max_row = 1)
     m = None
+    assert b.is_move_allowed(m) == False
+
+def test_board_is_move_allowed_move_contain_None_value():
+    b = Board(max_row = 1, row_size = 3)
+    m = [None, 1, 1]
     assert b.is_move_allowed(m) == False
 
 
@@ -179,19 +190,88 @@ def test_board_is_loose_any_move():
 # Board.evaluate()
 #####################################################
 
+def test_board_evaluate_all_good():
+    rs = 3
+    b = Board(max_row = 4, row_size = rs, min_val = 1, max_val = 3, solution = [1, 2, 2])
+    m = [1, 2, 2]
+    r = b.evaluate(m)
+    assert r["good"] == rs and r["wrong"] == 0
+
+def test_board_evaluate_nothing():
+    b = Board(max_row = 4, row_size = 3, min_val = 1, max_val = 3, solution = [1, 2, 2])
+    m = [3, 3, 3]
+    r = b.evaluate(m)
+    assert r["good"] == 0 and r["wrong"] == 0
+
+def test_board_evaluate_all_wrong():
+    rs = 3
+    b = Board(max_row = 4, row_size = rs, min_val = 1, max_val = 3, solution = [1, 2, 3])
+    m = [3, 1, 2]
+    r = b.evaluate(m)
+    assert r["good"] == 0 and r["wrong"] == rs
+
+def test_board_evaluate_112_122_not_double_count_the_1_solution():
+    b = Board(max_row = 4, row_size = 3, min_val = 1, max_val = 3, solution = [1, 2, 2])
+    m = [1, 1, 2]
+    r = b.evaluate(m)
+    print(r)
+    assert r["good"] == 2 and r["wrong"] == 0
+
+def test_board_evaluate_122_112_count_the_1_move_for_only_one_1():
+    b = Board(max_row = 4, row_size = 3, min_val = 1, max_val = 3, solution = [1, 1, 2])
+    m = [1, 2, 2]
+    r = b.evaluate(m)
+    print(r)
+    assert r["good"] == 2 and r["wrong"] == 0
+
+def test_board_evaluate_move_with_None():
+    with pytest.raises(ValueError):
+        b = Board(max_row = 4, row_size = 3, min_val = 1, max_val = 3, solution = [1, 1, 2])
+        m = [None, 2, 2]
+        r = b.evaluate(m)
+        print(r)
 
 #####################################################
 # Board.play()
 #####################################################
 
+def test_board_play_allowed_move():
+    b = Board(max_row = 3, row_size = 3, min_val = 1, max_val = 3, solution = [1, 1, 1])
+    m = [1, 2, 3]
+    played = b.play(m)
+    assert len(b.res) == 1 and len(b.rows) == 1 and played == True
+
+def test_board_play_forbidden_move():
+    b = Board(max_row = 3, row_size = 3, min_val = 1, max_val = 3, solution = [1, 1, 1])
+    m = [1, 2, 5]
+    played = b.play(m)
+    assert len(b.res) == 0 and len(b.rows) == 0 and played == False
+
+def test_board_play_board_full():
+    b = Board(max_row = 1, row_size = 3, min_val = 1, max_val = 3, solution = [1, 1, 1])
+    m = [1, 2, 3]
+    b.play(m)
+    played = b.play(m)
+    assert len(b.res) == 1 and len(b.rows) == 1 and played == False
+
+def test_board_play_after_win():
+    b = Board(max_row = 2, row_size = 3, min_val = 1, max_val = 3, solution = [1, 1, 1])
+    m = [1, 1, 1]
+    b.play(m)
+    played = b.play(m)
+    assert len(b.res) == 1 and len(b.rows) == 1 and played == False
 
 #####################################################
 # Board.get_random_move()
 #####################################################
 
+def test_board_get_random_move_check_size():
+    b = Board(row_size = 4)
+    m = b.get_random_move()
+    assert len(m) == b.row_size
 
 #####################################################
-# Board.all_move()
+# Board.all_moves()
 #####################################################
 
 
