@@ -25,7 +25,29 @@ class Board:
         self.row_size = row_size
         self.min_val = min_val
         self.max_val = max_val
-        self.solution = self.get_random_move() if solution == None else solution
+
+        if max_row <= 0:
+            raise ValueError("max_row({}) must be a positif integer".format(max_row))
+
+        if row_size <= 0:
+            raise ValueError("row_size({}) must be a positif integer".format(row_size))            
+
+        if min_val > max_val:
+            raise ValueError("min_val({}) is greater than max_val({})".format(min_val, max_val))
+
+        if solution:
+            self.solution = solution
+
+            if len(self.solution) != self.row_size:
+                raise ValueError("Solution array({}) doesn't have the same length as row_size({})".format(self.solution, row_size))
+
+            elif min(self.solution) < self.min_val:
+                raise ValueError("Solution array({}) contain a lower value than min_val({})".format(self.solution, self.min_val))
+
+            elif max(self.solution) > self.max_val:
+                raise ValueError("Solution array({}) contain a lower value than max_val({})".format(self.solution, self.max_val))
+        else:
+            self.solution = self.get_random_move() 
 
     """
     Return a copy of the board

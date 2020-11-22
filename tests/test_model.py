@@ -1,13 +1,50 @@
+import pytest
+
 from mastermind.model import Board
+
 #####################################################
 # Board.reset() and also __init__()
 #####################################################
 
-# Check min_val > max_val
-# row_size != solution
-# solution min < min_val
-# solution max > mmax_val
-# max_row <= 0
+def test_board_reset_min_val_gt_max_val():
+    with pytest.raises(ValueError):
+        b = Board(min_val = 3, max_val = 1)
+
+def test_board_reset_solution_bad_size():
+    with pytest.raises(ValueError):
+        b = Board(max_row = 1, row_size = 3, solution = [1, 1, 1, 1])
+
+def test_board_reset_solution_contain_lower_value_than_min_val():
+    with pytest.raises(ValueError):
+        b = Board(max_row = 1, row_size = 3, min_val = 1, max_val = 2, solution = [0, 1, 1])
+
+def test_board_reset_solution_contain_highter_value_than_max_val():
+    with pytest.raises(ValueError):
+        b = Board(max_row = 1, row_size = 3, min_val = 1, max_val = 2, solution = [3, 1, 1])
+
+def test_board_reset_max_row_positif():
+    b = Board(max_row = 1)
+    # Should raise no Exception
+
+def test_board_reset_max_row_equals_zero():
+    with pytest.raises(ValueError):
+        b = Board(max_row = 0)
+
+def test_board_reset_max_row_negatif():
+    with pytest.raises(ValueError):
+        b = Board(max_row = -1)
+
+def test_board_reset_row_size_positif():
+    b = Board(row_size = 1)
+    # Should raise no Exception
+
+def test_board_reset_row_size_equals_zero():
+    with pytest.raises(ValueError):
+        b = Board(row_size = 0)
+
+def test_board_reset_row_size_negatif():
+    with pytest.raises(ValueError):
+        b = Board(row_size = -1)
 
 
 #####################################################
@@ -94,19 +131,19 @@ def test_board_is_solution_none_solution():
 # Board.is_win()
 #####################################################
 
-def test_is_win_last_move_win():
+def test_board_is_win_last_move_win():
     b = Board(row_size = 3, max_row = 2, solution = [1, 1, 1])
     m = [1, 1, 1]
     b.play(m)
     assert b.is_win() == True
 
-def test_is_win_last_move_is_bad():
+def test_board_is_win_last_move_is_bad():
     b = Board(row_size = 3, max_row = 2, solution = [1, 1, 1])
     m = [1, 1, 2]
     b.play(m)
     assert b.is_win() == False
 
-def test_is_win_any_move():
+def test_board_is_win_any_move():
     b = Board(row_size = 3, max_row = 2, solution = [1, 1, 1])
     assert b.is_win() == False
 
@@ -115,26 +152,26 @@ def test_is_win_any_move():
 # Board.is_loose()
 #####################################################
 
-def test_is_loose_last_move_win():
+def test_board_is_loose_last_move_win():
     b = Board(row_size = 3, max_row = 2, solution = [1, 1, 1])
     m = [1, 1, 1]
     b.play(m)
     assert b.is_loose() == False
 
-def test_is_loose_last_move_is_bad():
+def test_board_is_loose_last_move_is_bad():
     b = Board(row_size = 3, max_row = 2, solution = [1, 1, 1])
     m = [1, 1, 2]
     b.play(m)
     assert b.is_loose() == False
 
-def test_is_loose_last_move_fill_the_board():
+def test_board_is_loose_last_move_fill_the_board():
     b = Board(row_size = 3, max_row = 2, solution = [1, 1, 1])
     m = [1, 1, 2]
     b.play(m)
     b.play(m)
     assert b.is_loose() == True
 
-def test_is_loose_any_move():
+def test_board_is_loose_any_move():
     b = Board(row_size = 3, max_row = 2, solution = [1, 1, 1])
     assert b.is_loose() == False
 
