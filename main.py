@@ -45,7 +45,7 @@ def pygame_run(b, ai, stats):
                 b.reset()
                 ai.reset()
             else:
-                # pygame.time.delay(100)
+                # pygame.time.delay(200)
                 ai.next_move()
 
         for event in pygame.event.get():
