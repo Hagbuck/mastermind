@@ -19,7 +19,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Step 2 : Launch
+### Step 2 : Test the whole project
+
+```
+pytest tests/test_model.py
+```
+
+### Step 3 : Launch
 
 ```
 # For graphical UI
@@ -36,3 +42,4 @@ python main.py 5000
 * basic_ai.py : Classic algorithm that generate all possible moves and reduce the list from the previous play
 * ui.py : Classes and function to draw the game by using *pygame*
 * stats.py : Class that generate XLXS file with games stats
+* tests/ : Tests

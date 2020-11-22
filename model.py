@@ -2,10 +2,10 @@ import random
 import copy
 import itertools
 
-max_row = 10
-row_size = 4
-min_val = 1
-max_val = 8
+default_max_row = 10
+default_row_size = 4
+default_min_val = 1
+default_max_val = 8
 
 """
 Board of Mastermind
@@ -14,16 +14,18 @@ class Board:
     """
     Create the board, if any solution is given, the solution is random
     """
-    def __init__(self, solution = None):
-        self.reset(solution)
+    def __init__(self, max_row = default_max_row, row_size = default_row_size, min_val = default_min_val, max_val = default_max_val, solution = None):
+        self.reset(max_row, row_size, min_val, max_val, solution)
 
-    def reset(self, solution = None):
-        self.solution = self.random_move() if solution == None else solution
+    def reset(self, max_row = default_max_row, row_size = default_row_size, min_val = default_min_val, max_val = default_max_val, solution = None):
         self.i = -1
         self.rows = []
         self.res = []
         self.max_row = max_row
         self.row_size = row_size
+        self.min_val = min_val
+        self.max_val = max_val
+        self.solution = self.get_random_move() if solution == None else solution
 
     """
     Return a copy of the board
@@ -35,14 +37,14 @@ class Board:
     Return True if a move is allow, False otherwise
     """
     def is_move_allowed(self, r):
-        if self.i >= max_row - 1:
+        if self.i >= self.max_row - 1:
             return False
 
-        if len(r) != row_size:
+        if len(r) != self.row_size:
             return False
 
         for v in r:
-            if v > max_val or v < min_val:
+            if v > self.max_val or v < self.min_val:
                 return False
 
         return True
@@ -112,17 +114,17 @@ class Board:
     """
     Generate a random move
     """
-    def random_move(self):
+    def get_random_move(self):
         move = []
-        for i in range(0, row_size):
-            move.append(random.randint(min_val, max_val))
+        for i in range(0, self.row_size):
+            move.append(random.randint(self.min_val, self.max_val))
         return move
     
     """
     Generate all the possible moves
     """
     def all_moves(self):
-        return list(itertools.product(list(range(min_val, max_val+1)),repeat = row_size))
+        return list(itertools.product(list(range(self.min_val, self.max_val+1)), repeat = self.row_size))
 
     """
     Get all moves with taking in consideration the last move
@@ -170,8 +172,8 @@ class Board:
     Return a string that contain the board
     """
     def __str__(self):
-        sep = '-' * ((2+row_size)*2-1) + '\n'
-        s = ('---(' + str(self.i + 1) + '/' + str(max_row) + ')---\n')
+        sep = '-' * ((2+self.row_size)*2-1) + '\n'
+        s = ('---(' + str(self.i + 1) + '/' + str(self.max_row) + ')---\n')
 
         for i in range(0, len(self.rows)):
             s += '| '
@@ -179,8 +181,8 @@ class Board:
                 s += str(self.rows[i][j]) + ' '
             s += '| {} {}\n'.format(self.res[i]["good"], self.res[i]["wrong"])
 
-        for i in range(len(self.rows), max_row):
-            s += '| ' + ('. ' * row_size) + '|\n'
+        for i in range(len(self.rows), self.max_row):
+            s += '| ' + ('. ' * self.row_size) + '|\n'
 
         s += sep
         s += '| '
